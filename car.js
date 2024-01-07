@@ -7,6 +7,7 @@ class Car {
 
     this.speed = 0;
     this.acceleration = 0.1;
+    this.nitros = 100;
     this.maxSpeed = 3;
     this.friction = 0.05;
 
@@ -46,6 +47,21 @@ class Car {
     else if (this.speed < 0) this.speed += this.friction;
 
     if (Math.abs(this.speed) < this.friction) this.speed = 0;
+
+    if (this.controls.isBoosting && this.nitros > 0) {
+      this.maxSpeed = 12;
+      this.acceleration = 0.3;
+      this.nitros -= this.acceleration * 3;
+    } else if (this.nitros < 100) {
+      this.nitros += this.acceleration;
+    }
+
+    if (Math.abs(this.nitros) < this.acceleration) {
+      this.controls.isBoosting = false;
+      this.maxSpeed = 3;
+      this.acceleration = 0.1;
+      this.nitros = 0;
+    }
   }
 
   draw(ctx) {

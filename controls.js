@@ -4,6 +4,7 @@ class Controls {
     this.right = false;
     this.backward = false;
     this.left = false;
+    this.isBoosting = false;
 
     this.#addKeyboardListeners();
   }
@@ -35,6 +36,7 @@ class Controls {
     this.right = keysPressed.includes(KEYS.ARROW_RIGHT);
     this.backward = keysPressed.includes(KEYS.ARROW_DOWN);
     this.left = keysPressed.includes(KEYS.ARROW_LEFT);
+    this.isBoosting = keysPressed.includes(KEYS.SHIFT);
   }
 }
 
@@ -43,4 +45,5 @@ const KEYS = {
   ARROW_RIGHT: "ArrowRight",
   ARROW_DOWN: "ArrowDown",
   ARROW_LEFT: "ArrowLeft",
+  SHIFT: "Shift",
 };
