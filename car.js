@@ -15,11 +15,12 @@ class Car {
     this.angleCorrectionFactor = 0.03;
 
     this.controls = new Controls();
+    this.sensor = new Sensor(this, 200, 1, (Math.PI * 5) / 12);
   }
 
-  update(ctx) {
+  update(roadBorders) {
     this.#move();
-    this.draw(ctx);
+    this.sensor.update(roadBorders);
   }
 
   #move() {
@@ -76,5 +77,6 @@ class Car {
 
     ctx.fill();
     ctx.restore();
+    this.sensor.draw(ctx);
   }
 }

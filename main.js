@@ -9,9 +9,8 @@ const CENTER_LANE_INDEX = Math.floor(LANES_COUNT / 2);
 const road = new Road(canvas.width / 2, 70, LANES_COUNT);
 const car = new Car(road.getLaneCenter(CENTER_LANE_INDEX), 100, 30, 50);
 
-car.draw(ctx);
-
 function animate() {
+  car.update(road.borders);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.save();
@@ -25,7 +24,7 @@ function animate() {
   );
 
   road.draw(ctx);
-  car.update(ctx);
+  car.draw(ctx);
   ctx.restore();
 
   const id = requestAnimationFrame(animate);
