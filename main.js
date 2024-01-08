@@ -17,6 +17,13 @@ function animate() {
   ctx.save();
   ctx.translate(-car.x + canvas.width * 0.5, -car.y + canvas.height * 0.7);
 
+  ctx.font = "16px sans-serif";
+  ctx.fillText(
+    `Nitros: ${car.nitros.toFixed(2)}`,
+    car.x - canvas.width * 0.5 + 20,
+    car.y - canvas.height * 0.7 + 20
+  );
+
   road.draw(ctx);
   car.update(ctx);
   ctx.restore();

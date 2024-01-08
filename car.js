@@ -62,10 +62,12 @@ class Car {
     }
 
     if (Math.abs(this.nitros) < this.acceleration) this.nitros = 0;
+    else if (this.nitros > 100) this.nitros = 100;
   }
 
   draw(ctx) {
     ctx.save();
+
     ctx.translate(this.x, this.y);
     ctx.rotate(-this.angle);
 
