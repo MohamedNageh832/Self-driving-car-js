@@ -52,16 +52,16 @@ class Car {
       this.maxSpeed = 12;
       this.acceleration = 0.3;
       this.nitros -= this.acceleration * 3;
-    } else if (this.nitros < 100) {
+    } else {
+      this.maxSpeed = 3;
+      this.acceleration = 0.1;
+    }
+
+    if (this.nitros < 100 && !this.controls.isBoosting) {
       this.nitros += this.acceleration;
     }
 
-    if (Math.abs(this.nitros) < this.acceleration) {
-      this.controls.isBoosting = false;
-      this.maxSpeed = 3;
-      this.acceleration = 0.1;
-      this.nitros = 0;
-    }
+    if (Math.abs(this.nitros) < this.acceleration) this.nitros = 0;
   }
 
   draw(ctx) {
