@@ -8,11 +8,11 @@ class Sensor {
     this.readings = [];
   }
 
-  update(roadBorders) {
-    this.#castRays(roadBorders);
+  update(roadBorders, traffic) {
+    this.#castRays(roadBorders, traffic);
   }
 
-  #castRays(roadBorders) {
+  #castRays(roadBorders, traffic) {
     this.rays = [];
     this.readings = [];
 
@@ -38,13 +38,13 @@ class Sensor {
 
       const ray = [startPoint, endPoint];
 
-      this.readings.push(this.#getReadings(ray, roadBorders));
+      this.readings.push(this.#getReadings(ray, roadBorders, traffic));
 
       this.rays.push(ray);
     }
   }
 
-  #getReadings(ray, roadBorders) {
+  #getReadings(ray, roadBorders, traffic) {
     const touches = [];
 
     for (let i = 0; i < roadBorders.length; i++) {
@@ -56,6 +56,20 @@ class Sensor {
       );
 
       if (touch) touches.push(touch);
+    }
+
+    for (let i = 0; i < traffic.length; i++) {
+      const poly = traffic[i].polygon;
+      for (let j = 0; j < poly.length; j++) {
+        const touch = getIntersection(
+          ray[0],
+          ray[1],
+          poly[j],
+          poly[(j + 1) % poly.length]
+        );
+
+        if (touch) touches.push(touch);
+      }
     }
 
     if (touches.length === 0) return null;

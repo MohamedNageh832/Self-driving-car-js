@@ -7,10 +7,19 @@ canvas.height = window.innerHeight - 4;
 const LANES_COUNT = 5;
 const CENTER_LANE_INDEX = Math.floor(LANES_COUNT / 2);
 const road = new Road(canvas.width / 2, 70, LANES_COUNT);
-const car = new Car(road.getLaneCenter(CENTER_LANE_INDEX), 100, 30, 50);
+const car = new Car(
+  road.getLaneCenter(CENTER_LANE_INDEX),
+  100,
+  30,
+  50,
+  "Manual"
+);
+const traffic = [
+  new Car(road.getLaneCenter(CENTER_LANE_INDEX), -100, 30, 50, "Auto"),
+];
 
 function animate() {
-  car.update(road.borders);
+  car.update(road.borders, traffic);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   ctx.save();
@@ -24,7 +33,13 @@ function animate() {
   );
 
   road.draw(ctx);
-  car.draw(ctx);
+
+  for (let i = 0; i < traffic.length; i++) {
+    traffic[i].update(road.borders, []);
+    traffic[i].draw(ctx, "#f00");
+  }
+
+  car.draw(ctx, "#00f");
   ctx.restore();
 
   const id = requestAnimationFrame(animate);

@@ -1,12 +1,16 @@
 class Controls {
-  constructor() {
+  constructor(controlType) {
     this.forward = false;
     this.right = false;
     this.backward = false;
     this.left = false;
     this.isBoosting = false;
 
-    this.#addKeyboardListeners();
+    if (controlType === "Manual") {
+      this.#addKeyboardListeners();
+    } else {
+      this.forward = true;
+    }
   }
 
   #addKeyboardListeners() {
