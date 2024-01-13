@@ -10,16 +10,18 @@ class Car {
     this.speed = 0;
     this.acceleration = 0.1;
     this.nitros = 100;
-    this.maxSpeed = 3;
+    this.maxSpeed = controlType === "AI" ? 3 : 2;
     this.friction = 0.05;
+    this.useBrain = controlType === "AI";
 
     this.angle = 0;
     this.angleCorrectionFactor = 0.03;
 
     this.controls = new Controls(controlType);
 
-    if (controlType === "Manual") {
+    if (this.useBrain) {
       this.sensor = new Sensor(this, 200, 4, (Math.PI * 5) / 12);
+      this.brain = new NeuralNetwork([this.sensor.raysCount, 6, 4]);
     }
   }
 
@@ -27,7 +29,19 @@ class Car {
     this.#move();
     this.isDamaged = this.#assesDamage(roadBorders, traffic);
     this.polygon = this.#createPolygon();
-    if (this.sensor) this.sensor.update(roadBorders, traffic);
+
+    if (!this.sensor) return;
+    this.sensor.update(roadBorders, traffic);
+
+    if (!this.useBrain) return;
+
+    const offsets = this.sensor.readings.map((s) => (s ? 1 - s.offset : 0));
+    const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+
+    this.controls.forward = outputs[0];
+    this.controls.left = outputs[1];
+    this.controls.right = outputs[2];
+    this.controls.backward = outputs[3];
   }
 
   #move() {
@@ -55,6 +69,8 @@ class Car {
     else if (this.speed < 0) this.speed += this.friction;
 
     if (Math.abs(this.speed) < this.friction) this.speed = 0;
+
+    if (!this.useBrain) return;
 
     if (this.controls.isBoosting && this.nitros > 0) {
       this.maxSpeed = 12;

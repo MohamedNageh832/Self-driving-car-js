@@ -7,8 +7,13 @@
 body {
   background-color: #eee;
   text-align: center;
+  display: flex;
 }
 
-#myCanvas {
+#simulationCanvas {
   background-color: #ddd;
+}
+
+#networkCanvas {
+  background-color: #000;
 }
