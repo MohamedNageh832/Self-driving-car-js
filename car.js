@@ -8,9 +8,9 @@ class Car {
     this.isDamaged = false;
 
     this.speed = 0;
-    this.acceleration = 0.1;
+    this.acceleration = 0.3;
     this.nitros = 100;
-    this.maxSpeed = controlType === "AI" ? 3 : 2;
+    this.maxSpeed = controlType === "AI" ? 6 : 2;
     this.friction = 0.05;
     this.useBrain = controlType === "AI";
 
@@ -20,15 +20,18 @@ class Car {
     this.controls = new Controls(controlType);
 
     if (this.useBrain) {
-      this.sensor = new Sensor(this, 200, 4, (Math.PI * 5) / 12);
-      this.brain = new NeuralNetwork([this.sensor.raysCount, 6, 4]);
+      this.sensor = new Sensor(this, 200, 6, Math.PI / 2);
+      this.brain = new NeuralNetwork([this.sensor.raysCount, 12, 12, 5]);
     }
   }
 
   update(roadBorders, traffic) {
-    this.#move();
+    if (this.isDamaged) return;
     this.isDamaged = this.#assesDamage(roadBorders, traffic);
+
     this.polygon = this.#createPolygon();
+
+    this.#move();
 
     if (!this.sensor) return;
     this.sensor.update(roadBorders, traffic);
@@ -42,6 +45,7 @@ class Car {
     this.controls.left = outputs[1];
     this.controls.right = outputs[2];
     this.controls.backward = outputs[3];
+    this.controls.isBoosting = outputs[4];
   }
 
   #move() {
@@ -132,7 +136,7 @@ class Car {
     }
   }
 
-  draw(ctx, color) {
+  draw(ctx, color, showSensor) {
     ctx.fillStyle = this.isDamaged ? "#aaa" : color;
 
     ctx.beginPath();
@@ -144,6 +148,6 @@ class Car {
 
     ctx.fill();
 
-    if (this.sensor) this.sensor.draw(ctx);
+    if (this.sensor && showSensor) this.sensor.draw(ctx);
   }
 }

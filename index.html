@@ -4,8 +4,18 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <canvas id="simulationCanvas"></canvas>
-  <canvas id="networkCanvas"></canvas>
+  <main class="simulation">
+    <section class="simulation__canvas">
+      <canvas id="simulationCanvas"></canvas>
+      <canvas id="networkCanvas"></canvas>
+    </section>
+
+    <footer class="simulation__controls">
+      <button class="save-best-brain-btn">Save</button>
+      <button class="discard-brain-btn">Discard</button>
+      <button class="reload-btn">Reload</button>
+    </footer>
+  </main>
 
   <script src="./utils.js"></script>
   <script src="./shapes.js"></script>

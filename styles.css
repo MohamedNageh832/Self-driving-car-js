@@ -7,6 +7,14 @@
 body {
   background-color: #eee;
   text-align: center;
+}
+
+.simulation {
+  display: flex;
+  flex-direction: column;
+}
+
+.simulation__canvas {
   display: flex;
 }
 
@@ -16,4 +24,30 @@ body {
 
 #networkCanvas {
   background-color: #000;
+}
+
+.simulation__controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+}
+
+.reload-btn,
+.save-best-brain-btn,
+.discard-brain-btn {
+  min-width: 100px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+.save-best-brain-btn {
+  background-color: rgb(40, 40, 160);
+  color: #fff;
+}
+
+.save-best-brain-btn:hover {
+  background-color: rgb(18, 18, 142);
 }

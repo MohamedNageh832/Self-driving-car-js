@@ -2,7 +2,7 @@ class Visualizer {
   static drawNetwork(ctx, network) {
     const canvas = ctx.canvas;
     const levelsCount = network.levels.length;
-    const neuronsOffset = 50;
+    const neuronsOffset = 30;
     const levelHeight = 100;
     const radius = 10;
     const networkHeight = levelHeight * levelsCount;

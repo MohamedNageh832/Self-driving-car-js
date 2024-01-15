@@ -4,15 +4,29 @@ class Road {
     this.width = laneWidth * lanesCount;
     this.lanesCount = lanesCount;
 
+    const CENTER_LANE_INDEX = Math.floor(lanesCount / 2);
+
     this.left = x - this.width / 2;
     this.right = x + this.width / 2;
     this.lanesXPosition = this.#getLanesXPosition();
+    this.lanes = this.#getLanes();
+    this.centerLane = this.lanes[CENTER_LANE_INDEX];
 
     const INFINITY = 1000000;
     this.top = -INFINITY;
     this.bottom = INFINITY;
 
     this.borders = this.#getBorders();
+  }
+
+  #getLanes() {
+    const lanes = [];
+
+    for (let i = 0; i < this.lanesCount; i++) {
+      lanes.push(new Lane(this, i));
+    }
+
+    return lanes;
   }
 
   #getLanesXPosition() {
@@ -24,15 +38,6 @@ class Road {
     }
 
     return result;
-  }
-
-  getLaneCenter(laneIndex) {
-    const laneWidth = this.width / this.lanesCount;
-    return (
-      this.left +
-      laneWidth / 2 +
-      Math.min(laneIndex, this.lanesCount - 1) * laneWidth
-    );
   }
 
   draw(ctx) {
@@ -71,5 +76,23 @@ class Road {
     ];
 
     return borders;
+  }
+}
+
+class Lane {
+  constructor(road, laneIndex) {
+    this.road = road;
+    this.laneWidth = road.width / road.lanesCount;
+    this.left = road.left + laneIndex * this.laneWidth;
+    this.center = this.#getLaneCenter(laneIndex);
+  }
+
+  #getLaneCenter(laneIndex) {
+    const laneWidth = this.road.width / this.road.lanesCount;
+    return (
+      this.road.left +
+      laneWidth / 2 +
+      Math.min(laneIndex, this.road.lanesCount - 1) * laneWidth
+    );
   }
 }
