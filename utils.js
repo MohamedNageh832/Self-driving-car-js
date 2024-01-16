@@ -37,3 +37,17 @@ function polyIntersect(poly1, poly2) {
 
   return false;
 }
+
+function deepClone(object) {
+  if (typeof object !== "object" || object === null) return object;
+
+  const result = Array.isArray(object) ? [] : {};
+  const keys = Object.keys(object);
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    result[key] = deepClone(object[key]);
+  }
+
+  return result;
+}

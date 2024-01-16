@@ -20,8 +20,10 @@ class NeuralNetwork {
   }
 
   static mutate(network, mutationFactor) {
-    for (let i = 0; i < network.levels.length; i++) {
-      const { biases, weights } = network.levels[i];
+    const mutatedNetwork = deepClone(network);
+
+    for (let i = 0; i < mutatedNetwork.levels.length; i++) {
+      const { biases, weights } = mutatedNetwork.levels[i];
 
       for (let j = 0; j < biases.length; j++) {
         biases[j] = lerp(biases[i], Math.random() * 2 - 1, mutationFactor);
@@ -38,7 +40,7 @@ class NeuralNetwork {
       }
     }
 
-    return network;
+    return mutatedNetwork;
   }
 }
 

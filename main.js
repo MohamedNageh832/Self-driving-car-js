@@ -2,9 +2,6 @@ const simulationCanvas = document.getElementById("simulationCanvas");
 const networkCanvas = document.getElementById("networkCanvas");
 const ctx = simulationCanvas.getContext("2d");
 const networkCtx = networkCanvas.getContext("2d");
-
-console.log(document.hasFocus());
-
 const simulationControls = document.querySelector(".simulation__controls");
 
 const drawingSpaceWidth = window.innerWidth;
@@ -17,9 +14,7 @@ networkCanvas.height = drawingSpaceHeight - 4;
 
 const LANES_COUNT = 3;
 const road = new Road(simulationCanvas.width / 2, 70, LANES_COUNT);
-const n = 500;
-const cars = generateCars(n);
-let carsToDraw = cars;
+const n = 1000;
 const traffic = [
   new Car(road.centerLane.center, -100, 30, 50, "Auto"),
   new Car(road.lanes[0].center, -300, 30, 50, "Auto"),
@@ -32,37 +27,44 @@ const traffic = [
   new Car(road.lanes[2].center, -900, 30, 50, "Auto"),
   new Car(road.lanes[0].center, -1100, 30, 50, "Auto"),
   new Car(road.lanes[1].center, -1100, 30, 50, "Auto"),
-  // new Car(road.lanes[1].center, -1500, 30, 50, "Auto"),
-  // new Car(road.lanes[2].center, -1500, 30, 50, "Auto"),
+  new Car(road.lanes[1].center, -1300, 30, 50, "Auto"),
+  new Car(road.lanes[2].center, -1300, 30, 50, "Auto"),
+  new Car(road.lanes[0].center, -1500, 30, 50, "Auto"),
+  new Car(road.lanes[2].center, -1500, 30, 50, "Auto"),
+  new Car(road.lanes[1].center, -1700, 30, 50, "Auto"),
 ];
 const fps = 60;
 let prevTime = 0;
+const prevBestCar = getBestCar();
+const cars = generateCars(n);
+let carsToDraw = cars;
 let bestCar = cars[0];
+let simulationIsMonitored = false;
 
-function saveBestBrain() {
-  localStorage.setItem("bestBrain", JSON.stringify(bestCar.brain));
+function saveBestCar() {
+  const data = { brain: bestCar.brain, y: bestCar.y };
+  localStorage.setItem("bestCar", JSON.stringify(data));
 }
 
-function discardBestBrain() {
-  localStorage.removeItem("bestBrain");
+function discardBestCar() {
+  localStorage.removeItem("bestCar");
 }
 
-function getBestBrain() {
-  return JSON.parse(localStorage.getItem("bestBrain"));
+function getBestCar() {
+  return JSON.parse(localStorage.getItem("bestCar"));
 }
 
 function generateCars(n) {
   const cars = [];
 
-  const newGenCount = n - cars.length;
+  const bestBrain = prevBestCar ? prevBestCar.brain : null;
 
-  for (let i = 0; i < newGenCount; i++) {
+  for (let i = 0; i < n; i++) {
     const car = new Car(road.centerLane.center, 100, 30, 50, "AI");
 
-    const bestBrain = getBestBrain();
-    if (bestBrain) {
-      if (i !== 0) car.brain = NeuralNetwork.mutate(bestBrain, 0.1);
-      else car.brain = bestBrain;
+    if (prevBestCar) {
+      if (i === 0) car.brain = bestBrain;
+      else car.brain = NeuralNetwork.mutate(bestBrain, 0.5);
     }
 
     cars.push(car);
@@ -71,17 +73,20 @@ function generateCars(n) {
   return cars;
 }
 
-function selectBestBrain() {
-  let isStable = true;
-  const prevBestBrain = getBestBrain();
+function monitorSimulation() {
+  simulationIsMonitored = true;
 
-  for (let i = 0; i < traffic.length; i++) {
-    if (bestCar.y - traffic[i].y > -200) isStable = false;
-  }
+  setTimeout(() => {
+    const passedTraffic = bestCar.y - traffic[traffic.length - 1].y < -100;
+    const didBetter = bestCar.y < prevBestCar.y;
 
-  if (isStable && bestCar.y < prevBestBrain.y) saveBestBrain();
+    if (passedTraffic && didBetter) {
+      saveBestCar();
+      NotificationManager.push("New best brain was found!");
+    }
 
-  window.location.reload();
+    window.location.reload();
+  }, 60000);
 }
 
 function animate(time) {
@@ -136,7 +141,7 @@ function animate(time) {
 
   const id = requestAnimationFrame(animate);
 
-  setTimeout(selectBestBrain, 20000);
+  if (!simulationIsMonitored) monitorSimulation();
 }
 
 animate();
@@ -145,10 +150,10 @@ window.addEventListener("resize", () => {
   simulationCanvas.height = window.innerHeight - 4;
 });
 
-const saveBestBrainBtn = document.querySelector(".save-best-brain-btn");
+const saveBestCarBtn = document.querySelector(".save-best-brain-btn");
 const discardBrainBtn = document.querySelector(".discard-brain-btn");
 const reloadBtn = document.querySelector(".reload-btn");
 
-saveBestBrainBtn.addEventListener("click", saveBestBrain);
-discardBrainBtn.addEventListener("click", discardBestBrain);
+saveBestCarBtn.addEventListener("click", saveBestCar);
+discardBrainBtn.addEventListener("click", discardBestCar);
 reloadBtn.addEventListener("click", () => window.location.reload());

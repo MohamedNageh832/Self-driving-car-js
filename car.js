@@ -8,7 +8,7 @@ class Car {
     this.isDamaged = false;
 
     this.speed = 0;
-    this.acceleration = 0.3;
+    this.acceleration = 0.2;
     this.nitros = 100;
     this.maxSpeed = controlType === "AI" ? 6 : 2;
     this.friction = 0.05;
